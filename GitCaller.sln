@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32002.261
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitCaller", "GitCaller\GitCaller.csproj", "{DDD95B29-A703-4651-A127-1B9A91D75804}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DDD95B29-A703-4651-A127-1B9A91D75804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDD95B29-A703-4651-A127-1B9A91D75804}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDD95B29-A703-4651-A127-1B9A91D75804}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDD95B29-A703-4651-A127-1B9A91D75804}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B2805D00-232C-4B6D-9D22-305AE2943FC7}
+	EndGlobalSection
+EndGlobal
