@@ -81,7 +81,7 @@ namespace GitCaller
             {
                 using (var repo = new Repository(RepoPath))
                 {
-                    repo.Commit($"{DateTime.Now.ToString("yyyy-MM-dd")} {CommitMessage}", new Signature(UserName, Branch, DateTimeOffset.Now),
+                    repo.Commit($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm")} {CommitMessage}", new Signature(UserName, Branch, DateTimeOffset.Now),
                     new Signature(UserName, Branch, DateTimeOffset.Now));
                 }
 

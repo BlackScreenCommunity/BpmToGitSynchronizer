@@ -1,19 +1,38 @@
 ﻿using System;
+using System.Threading;
+using System.Timers;
 
 namespace GitCaller
 {
     class Program
     {
-        static void Main(string[] args)
+        private static ManualResetEvent waitHandle = new ManualResetEvent(false);
+
+        static void Main()
         {
-            Console.WriteLine("Hello World!");
+            var aTimer = new System.Timers.Timer(60 * 60 * 1000);
+            aTimer.Elapsed += new ElapsedEventHandler(RunTask);
+            aTimer.Start();
+            waitHandle.WaitOne();
+        }
 
-            string testRepo = @"C:\Users\nkuzmin\Desktop\git\demorepository\";
-            var gitOperator = new GitOperator(testRepo, "nickkuzmin1301@gmail.com", "", "master");
+        private static void RunTask(object source, ElapsedEventArgs e)
+        {
+            Console.WriteLine($"Run task at {DateTime.Now}");
 
-            gitOperator.StageChanges();
-            gitOperator.CommitChanges();
-            gitOperator.PushChanges();
+            var configurations = ConfigurationManager.Load("caller_config.json");
+
+            foreach (var configuration in configurations)
+            {
+                BpmSoftOperator sender = new BpmSoftOperator(configuration.BpmSoft.Url, configuration.BpmSoft.UserName, configuration.BpmSoft.Password);
+                Console.WriteLine($"BpmSoftOperator: {sender.PullChangesToFileSystem()}");
+
+                var gitOperator = new GitOperator(configuration.GitRepo.Path, configuration.GitRepo.UserName, configuration.GitRepo.Password, configuration.GitRepo.Branch);
+
+                gitOperator.StageChanges();
+                gitOperator.CommitChanges();
+                gitOperator.PushChanges();
+            }
         }
     }
 }
