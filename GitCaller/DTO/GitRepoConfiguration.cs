@@ -4,6 +4,9 @@ namespace GitCaller
 {
     public class GitRepoConfiguration
     {
+        [JsonProperty("Path")]
+        public string Path;
+
         [JsonProperty("UserName")]
         public string UserName;
 
