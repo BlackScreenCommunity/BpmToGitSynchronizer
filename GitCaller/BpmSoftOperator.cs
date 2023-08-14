@@ -42,7 +42,7 @@ namespace GitCaller
         public string PullChangesToFileSystem()
         {
             Auth();
-            string pathToService = IsNetCore ? $"{Url}/ServiceModel/AppInstallerService.svc/LoadPackagesToFileSystem" : $"{Url}/0/ServiceModel/AppInstallerService.svc/LoadPackagesToFileSystem"
+            string pathToService = IsNetCore ? $"{Url}/ServiceModel/AppInstallerService.svc/LoadPackagesToFileSystem" : $"{Url}/0/ServiceModel/AppInstallerService.svc/LoadPackagesToFileSystem";
             return SendPostRequest(pathToService, "");
         }
 
