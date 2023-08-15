@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "GitCaller": {
+    "BpmToGitSynchronizer": {
       "commandName": "Project",
       "commandLineArgs": "ForceCommit"
     }

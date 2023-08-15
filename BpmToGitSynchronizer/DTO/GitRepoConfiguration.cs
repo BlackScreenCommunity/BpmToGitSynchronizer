@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace GitCaller
+namespace BpmToGitSynchronizer
 {
     public class GitRepoConfiguration
     {

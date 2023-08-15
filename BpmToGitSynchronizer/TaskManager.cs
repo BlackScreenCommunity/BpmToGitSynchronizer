@@ -3,9 +3,8 @@ using System.IO;
 using System.Threading;
 using System.Timers;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 
-namespace GitCaller
+namespace BpmToGitSynchronizer
 {
     /// <summary>
     /// Handle user tasks

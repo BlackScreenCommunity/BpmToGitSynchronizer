@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
 
-namespace GitCaller
+namespace BpmToGitSynchronizer
 {
     /// <summary>
     /// Reads and prepares bpmsoft and git-repo configurations 

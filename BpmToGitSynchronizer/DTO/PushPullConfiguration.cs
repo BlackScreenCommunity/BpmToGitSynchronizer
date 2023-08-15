@@ -1,4 +1,4 @@
-﻿namespace GitCaller
+﻿namespace BpmToGitSynchronizer
 {
     public class PushPullConfiguration
     {

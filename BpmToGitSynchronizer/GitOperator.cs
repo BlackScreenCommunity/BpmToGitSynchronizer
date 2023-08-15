@@ -2,7 +2,7 @@
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 
-namespace GitCaller
+namespace BpmToGitSynchronizer
 {
     /// <summary>
     /// Performs Git-repository operations
