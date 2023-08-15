@@ -1,37 +1,22 @@
-﻿using System;
-using System.Threading;
-using System.Timers;
-
-namespace GitCaller
+﻿namespace GitCaller
 {
+    /// <summary>
+    /// Runs program
+    /// No arguments - runs scheduled task to perform commits periodically
+    /// ForceCommit - single time run. Performs pull to file system from bpmsoft and push commits to git
+    /// </summary>
     class Program
     {
-        private static ManualResetEvent waitHandle = new ManualResetEvent(false);
-
-        static void Main()
+        static void Main(string[] args)
         {
-            var aTimer = new System.Timers.Timer(60 * 60 * 1000);
-            aTimer.Elapsed += new ElapsedEventHandler(RunTask);
-            aTimer.Start();
-            waitHandle.WaitOne();
-        }
-
-        private static void RunTask(object source, ElapsedEventArgs e)
-        {
-            Console.WriteLine($"Run task at {DateTime.Now}");
-
-            var configurations = ConfigurationManager.Load("caller_config.json");
-
-            foreach (var configuration in configurations)
+            if (args.Length == 0)
             {
-                BpmSoftOperator sender = new BpmSoftOperator(configuration.BpmSoft.Url, configuration.BpmSoft.UserName, configuration.BpmSoft.Password);
-                Console.WriteLine($"BpmSoftOperator: {sender.PullChangesToFileSystem()}");
+                TaskManager.RunSheduledTask();
+            }
 
-                var gitOperator = new GitOperator(configuration.GitRepo.Path, configuration.GitRepo.UserName, configuration.GitRepo.Password, configuration.GitRepo.Branch);
-
-                gitOperator.StageChanges();
-                gitOperator.CommitChanges();
-                gitOperator.PushChanges();
+            if (args.Length >= 1 && args[0] == "ForceCommit")
+            {
+                TaskManager.RunAutoCommiter();
             }
         }
     }
