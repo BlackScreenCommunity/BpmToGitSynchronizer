@@ -12,5 +12,8 @@ namespace GitCaller
 
         [JsonProperty("Password")]
         public string Password;
+
+        [JsonProperty("IsNetCore")]
+        public bool IsNetCore;
     }
 }

@@ -15,5 +15,8 @@ namespace GitCaller
 
         [JsonProperty("Branch")]
         public string Branch;
+
+        [JsonProperty("CommitMessage")]
+        public string CommitMessage;
     }
 }
