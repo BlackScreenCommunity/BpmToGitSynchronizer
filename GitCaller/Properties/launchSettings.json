@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GitCaller": {
+      "commandName": "Project",
+      "commandLineArgs": "ForceCommit"
+    }
+  }
+}

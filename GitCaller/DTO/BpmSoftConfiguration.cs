@@ -1,19 +1,10 @@
-﻿using Newtonsoft.Json;
-
-namespace GitCaller
+﻿namespace GitCaller
 {
     public class BpmSoftConfiguration
     {
-        [JsonProperty("Url")]
-        public string Url;
-
-        [JsonProperty("UserName")]
-        public string UserName;
-
-        [JsonProperty("Password")]
-        public string Password;
-
-        [JsonProperty("IsNetCore")]
-        public bool IsNetCore;
+        public string Url { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public bool IsNetCore { get; set; }
     }
 }

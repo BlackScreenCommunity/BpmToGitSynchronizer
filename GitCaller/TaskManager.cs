@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Timers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 
 namespace GitCaller
 {
@@ -12,14 +15,22 @@ namespace GitCaller
     {
         private static ManualResetEvent waitHandle = new ManualResetEvent(false);
 
+        private static IConfiguration Configuration
+        {
+            get
+            {
+                var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false);
+                return builder.Build();
+            }
+        }
+
         /// <summary>
         /// Schedule periodic task to pull-push changes
         /// </summary>
         public static void RunSheduledTask()
         {
-            int operationPeriodInHour = 1;
-            Console.WriteLine($"Run task every {operationPeriodInHour} hour/s");
-
+            var operationPeriodInHour = int.Parse(Configuration["PushPullPeriodInHours"]);
+            Console.WriteLine($"Run task every {operationPeriodInHour} hours");
             var aTimer = new System.Timers.Timer(operationPeriodInHour * 60 * 60 * 1000);
             aTimer.Elapsed += new ElapsedEventHandler(RunTask);
             aTimer.Start();
@@ -43,7 +54,7 @@ namespace GitCaller
         {
             Console.WriteLine($"Run task at {DateTime.Now}");
 
-            var configurations = ConfigurationManager.Load("caller_config.json");
+            var configurations = PushPullConfigurationManager.Load();
 
             foreach (var configuration in configurations)
             {
