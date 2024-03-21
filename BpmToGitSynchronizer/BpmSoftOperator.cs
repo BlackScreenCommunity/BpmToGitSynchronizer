@@ -79,6 +79,25 @@ namespace BpmToGitSynchronizer
         }
 
         /// <summary>
+        /// Sends a request to update the date of the last synchronization session with the git repository
+        /// </summary>
+        /// <returns>Response's content</returns>
+        public string UpdateLastGitSyncDate()
+        {
+            Authenticate();
+            var serviceUri = "rest/BpmToGitSynchronizerIndicatorService/UpdateLastGitSyncDate";
+            string pathToService = IsNetCore ? $"{Url}/{serviceUri}" : $"{Url}/0/{serviceUri}";
+
+            var dateTimeUnspec = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
+            var utcDateTime = TimeZoneInfo.ConvertTimeToUtc(dateTimeUnspec, TimeZoneInfo.Local);
+
+            var body = @"{""dateTime"": """ + utcDateTime.ToString("yyyy-MM-dd HH:mm:ss,fff") + @"""}";
+            var response = SendPostRequest(pathToService, body);
+            Console.WriteLine($"Result of updating last git sync date: {response}");
+            return response;
+        }
+
+        /// <summary>
         /// Perform a POST request to the BpmSoft/Cretio system
         /// </summary>
         /// <param name="url">Url address of BpmSoft/Creatio</param>

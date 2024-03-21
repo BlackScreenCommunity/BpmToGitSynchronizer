@@ -57,8 +57,8 @@ namespace BpmToGitSynchronizer
 
             foreach (var configuration in configurations)
             {
-                BpmSoftOperator sender = new BpmSoftOperator(configuration.BpmSoft.Url, configuration.BpmSoft.UserName, configuration.BpmSoft.Password, configuration.BpmSoft.IsNetCore);
-                Console.WriteLine($"BpmSoftOperator: {sender.PullChangesToFileSystem()}");
+                BpmSoftOperator bpmsoftOperator = new BpmSoftOperator(configuration.BpmSoft.Url, configuration.BpmSoft.UserName, configuration.BpmSoft.Password, configuration.BpmSoft.IsNetCore);
+                Console.WriteLine($"BpmSoftOperator: {bpmsoftOperator.PullChangesToFileSystem()}");
 
                 var gitOperator = new GitOperator(
                     configuration.GitRepo.Path, 
@@ -71,6 +71,8 @@ namespace BpmToGitSynchronizer
                 gitOperator.StageChanges();
                 gitOperator.CommitChanges();
                 gitOperator.PushChanges();
+
+                bpmsoftOperator.UpdateLastGitSyncDate();
             }
         }
     }
