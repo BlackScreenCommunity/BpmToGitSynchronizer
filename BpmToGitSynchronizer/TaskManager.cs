@@ -6,6 +6,13 @@ using Microsoft.Extensions.Configuration;
 
 namespace BpmToGitSynchronizer
 {
+
+    public enum SyncStatus
+    {
+       Success,
+       Error
+    }
+
     /// <summary>
     /// Handle user tasks
     /// Runs single time or plans periodically tasks 
@@ -60,19 +67,26 @@ namespace BpmToGitSynchronizer
                 BpmSoftOperator bpmsoftOperator = new BpmSoftOperator(configuration.BpmSoft.Url, configuration.BpmSoft.UserName, configuration.BpmSoft.Password, configuration.BpmSoft.IsNetCore);
                 Console.WriteLine($"BpmSoftOperator: {bpmsoftOperator.PullChangesToFileSystem()}");
 
-                var gitOperator = new GitOperator(
-                    configuration.GitRepo.Path, 
-                    configuration.GitRepo.UserName, 
-                    configuration.GitRepo.Password, 
-                    configuration.GitRepo.Branch,
-                    configuration.GitRepo.CommitMessage
-                );
+                try
+                {
+                    var gitOperator = new GitOperator(
+                        configuration.GitRepo.Path,
+                        configuration.GitRepo.UserName,
+                        configuration.GitRepo.Password,
+                        configuration.GitRepo.Branch,
+                        configuration.GitRepo.CommitMessage
+                    );
 
-                gitOperator.StageChanges();
-                gitOperator.CommitChanges();
-                gitOperator.PushChanges();
-
-                bpmsoftOperator.UpdateLastGitSyncDate();
+                    gitOperator.StageChanges();
+                    gitOperator.CommitChanges();
+                    gitOperator.PushChanges();
+                    bpmsoftOperator.UpdateLastGitSyncDate();
+                    bpmsoftOperator.UpdateSyncStatus(SyncStatus.Success);
+                }
+                catch (Exception ex)
+                {
+                    bpmsoftOperator.UpdateSyncStatus(SyncStatus.Error, ex.Message);
+                }
             }
         }
     }

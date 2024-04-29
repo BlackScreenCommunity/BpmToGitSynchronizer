@@ -69,6 +69,7 @@ namespace BpmToGitSynchronizer
             catch (Exception ex)
             {
                 Console.WriteLine("StageChanges " + ex.Message);
+                //throw new Exception("Ошибка создания добавления изменений в индекс", ex);
             }
         }
 
@@ -89,6 +90,7 @@ namespace BpmToGitSynchronizer
             catch (Exception e)
             {
                 Console.WriteLine("CommitChanges " + e.Message);
+                //throw new Exception("Ошибка создания COMMIT", e);
             }
         }
 
@@ -114,7 +116,8 @@ namespace BpmToGitSynchronizer
             }
             catch (Exception e)
             {
-                Console.WriteLine("PushChanges " + e.Message);
+                Console.WriteLine("Error when pushing changes " + e.Message);
+                throw new Exception("Ошибка выполнения PUSH в репозиторий", e);
             }
         }
     }

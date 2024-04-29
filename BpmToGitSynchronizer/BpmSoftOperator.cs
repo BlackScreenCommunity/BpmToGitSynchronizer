@@ -98,6 +98,24 @@ namespace BpmToGitSynchronizer
         }
 
         /// <summary>
+        /// Sends git operation status to CRM system
+        /// </summary>
+        /// <param name="status">Sync statuc code</param>
+        /// <param name="message">Sync status message</param>
+        /// <returns>Response's content</returns>
+        internal string UpdateSyncStatus(SyncStatus status, string message = default)
+        {
+            Authenticate();
+            var serviceUri = "rest/BpmToGitSynchronizerIndicatorService/UpdateGitSyncStatus";
+            string pathToService = IsNetCore ? $"{Url}/{serviceUri}" : $"{Url}/0/{serviceUri}";
+
+            var body = @"{""status"":""" + status + @""", ""message"":""" + message + @""" }";
+            var response = SendPostRequest(pathToService, body);
+            Console.WriteLine($"Result of updating sync status: {response}");
+            return response;
+        }
+
+        /// <summary>
         /// Perform a POST request to the BpmSoft/Cretio system
         /// </summary>
         /// <param name="url">Url address of BpmSoft/Creatio</param>

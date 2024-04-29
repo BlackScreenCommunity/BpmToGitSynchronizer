@@ -62,3 +62,10 @@ V1
 2:Configuration,j
 2:conf,m
 2:builder,E3
+2:UpdateSyncStatus,i0
+2:status,HF
+2:message,k3
+2:serviceUri,z
+2:pathToService,VS
+2:BpmToGitSynchronizer,lQ
+2:SyncStatus,RD
