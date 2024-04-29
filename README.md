@@ -64,7 +64,7 @@ Cодержит параметры сборок и их репозиториев
 
 ### Без параметра
 
-Базовый запуск утилиты. Выгрузка-фиксация не запускается, а только планируется на время, указанное в параметре PushPullPeriodInHours.
+Базовый запуск утилиты. Выполняется выгрузка-фиксация изменений, затем планируется следующий запуск через период, указанный в параметре PushPullPeriodInHours.
 
 Запуск в Windows
 
@@ -76,7 +76,7 @@ Cодержит параметры сборок и их репозиториев
 dotnet BpmToGitSynchronizer.dll
 ```
 
-### ForceCommit
+### Commit (ForceCommit)
 
 Единоразово запускает цикл выгрузки-фиксации изменений.
 После завершения одной итерации цикла утилита завершает работу.
@@ -85,8 +85,8 @@ dotnet BpmToGitSynchronizer.dll
 
 ``` bash
 # Запуск в Windows
-.\BpmToGitSynchronizer.exe ForceCommit
+.\BpmToGitSynchronizer.exe Commit
 
 # Запуск в Linux
-dotnet BpmToGitSynchronizer.dll ForceCommit
+dotnet BpmToGitSynchronizer.dll Commit
 ```
