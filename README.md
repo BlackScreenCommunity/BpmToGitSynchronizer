@@ -90,3 +90,33 @@ dotnet BpmToGitSynchronizer.dll
 # Запуск в Linux
 dotnet BpmToGitSynchronizer.dll Commit
 ```
+## Запуск утилиты как сервиса на Linux
+
+``` bash
+# Создать и отредактировать файл
+sudo vim /etc/systemd/system/bpm_to_git_synchronizer.service
+
+# Добавить сервис в автозагрузку и запустить
+sudo systemctl enable bpm_to_git_synchronizer.service --now
+```
+
+Содержимое файла `bpm_to_git_synchronizer.service`
+
+``` bash
+[Unit]
+Description=bpm_to_git_synchronizer
+
+[Service]
+ExecStart=/usr/bin/dotnet BpmToGitSynchronizer.dll
+# Путь до каталога с приложением
+WorkingDirectory=/srv/BpmToGitSyncronizer
+User=supervisor
+Group=supervisor
+Restart=always
+SyslogIdentifier=bpm_to_git_synchronizer
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
