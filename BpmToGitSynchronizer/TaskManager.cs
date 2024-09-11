@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.Configuration;
 
@@ -37,7 +38,7 @@ namespace BpmToGitSynchronizer
         {
             var operationPeriodInHour = int.Parse(Configuration["PushPullPeriodInHours"]);
             Console.WriteLine($"Run task every {operationPeriodInHour} hours");
-            var aTimer = new System.Timers.Timer(operationPeriodInHour * 60 * 60 * 1000);
+            var aTimer = new System.Timers.Timer(operationPeriodInHour * 60 * 1000);
             aTimer.Elapsed += new ElapsedEventHandler(RunTask);
             aTimer.Start();
             waitHandle.WaitOne();
@@ -82,6 +83,17 @@ namespace BpmToGitSynchronizer
                     gitOperator.PushChanges();
                     bpmsoftOperator.UpdateLastGitSyncDate();
                     bpmsoftOperator.UpdateSyncStatus(SyncStatus.Success);
+
+
+                    CancellationTokenSource cancelTokenSource = new CancellationTokenSource(); 
+                    CancellationToken token = cancelTokenSource.Token;
+                    Task task = new Task(() => { 
+                        bpmsoftOperator.IsPolling = true;    
+                        bpmsoftOperator.WaitManualCommit(gitOperator, token);
+                    }, token);
+                    task.Start();
+                    task.Wait(token);
+                    
                 }
                 catch (Exception ex)
                 {

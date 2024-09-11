@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BpmToGitSynchronizer
 {
@@ -12,6 +15,7 @@ namespace BpmToGitSynchronizer
         string url;
         string userName;
         string password;
+        bool isPolling = false;
         bool isNetCore;
         CookieContainer cookies = default;
 
@@ -31,6 +35,7 @@ namespace BpmToGitSynchronizer
         /// Attribute which indicates the system platform (NetCore or NetFramework) 
         /// </summary>
         public bool IsNetCore { get => isNetCore; set => isNetCore = value; }
+        public bool IsPolling { get => isPolling; set => isPolling = value; }
 
         /// <summary>
         /// Autentification service url-address
@@ -160,6 +165,31 @@ namespace BpmToGitSynchronizer
             catch (Exception e)
             {
                 return e.Message;
+            }
+        }
+
+        internal void WaitManualCommit(GitOperator gitOperator, System.Threading.CancellationToken token)
+        {
+            while(!token.IsCancellationRequested) {
+                Console.WriteLine($"Send long polling request");
+                Authenticate();
+                var serviceUri = "rest/BpmToGitSynchronizerIndicatorService/CommitMessagePolling";
+                string pathToService = IsNetCore ? $"{Url}/{serviceUri}" : $"{Url}/0/{serviceUri}";
+
+                var body = "{}";
+                CancellationTokenSource cancelTokenSource = new CancellationTokenSource(); 
+                CancellationToken request_token = cancelTokenSource.Token;
+                Task task = new Task(() => { 
+                    var response = SendPostRequest(pathToService, body);
+                    Console.WriteLine($"Result of updating sync status: {response}");
+
+                    PullChangesToFileSystem();
+                    gitOperator.StageChanges();
+                    gitOperator.CommitChanges();
+                    gitOperator.PushChanges();
+                }, token);
+                task.Start();
+                task.Wait(token);
             }
         }
     }
