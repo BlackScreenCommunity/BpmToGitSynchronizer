@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.Configuration;
 
@@ -44,6 +43,20 @@ namespace BpmToGitSynchronizer
             waitHandle.WaitOne();
         }
 
+
+        public static void RunManualCommiter() {
+            
+            var configurations = PushPullConfigurationManager.Load();
+            foreach (var configuration in configurations)
+            {
+                if(configuration.BpmSoft.EnableManualCommit) {
+                    BpmSoftOperator bpmsoftOperator = new BpmSoftOperator(configuration.BpmSoft.Url, configuration.BpmSoft.UserName, configuration.BpmSoft.Password, configuration.BpmSoft.IsNetCore);
+                    Console.WriteLine($"BpmSoftOperator: {bpmsoftOperator.PullChangesToFileSystem()}");
+                    bpmsoftOperator.WaitManualCommit(new GitOperator(configuration.GitRepo));
+                }
+            }
+
+        }
         /// <summary>
         /// Event handler - runs pull-push task
         /// </summary>
@@ -70,30 +83,14 @@ namespace BpmToGitSynchronizer
 
                 try
                 {
-                    var gitOperator = new GitOperator(
-                        configuration.GitRepo.Path,
-                        configuration.GitRepo.UserName,
-                        configuration.GitRepo.Password,
-                        configuration.GitRepo.Branch,
-                        configuration.GitRepo.CommitMessage
-                    );
+                    var gitOperator = new GitOperator(configuration.GitRepo);
 
                     gitOperator.StageChanges();
                     gitOperator.CommitChanges();
                     gitOperator.PushChanges();
                     bpmsoftOperator.UpdateLastGitSyncDate();
                     bpmsoftOperator.UpdateSyncStatus(SyncStatus.Success);
-
-
-                    CancellationTokenSource cancelTokenSource = new CancellationTokenSource(); 
-                    CancellationToken token = cancelTokenSource.Token;
-                    Task task = new Task(() => { 
-                        bpmsoftOperator.IsPolling = true;    
-                        bpmsoftOperator.WaitManualCommit(gitOperator, token);
-                    }, token);
-                    task.Start();
-                    task.Wait(token);
-                    
+                   
                 }
                 catch (Exception ex)
                 {

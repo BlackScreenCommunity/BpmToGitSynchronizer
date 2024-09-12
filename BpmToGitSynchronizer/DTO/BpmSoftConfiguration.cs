@@ -6,6 +6,6 @@
         public string UserName { get; set; }
         public string Password { get; set; }
         public bool IsNetCore { get; set; }
-        public bool EnableMaunalCommit { get; set; }
+        public bool EnableManualCommit { get; set; }
     }
 }

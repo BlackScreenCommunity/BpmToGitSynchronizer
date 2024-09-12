@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace BpmToGitSynchronizer
 {
@@ -168,28 +165,21 @@ namespace BpmToGitSynchronizer
             }
         }
 
-        internal void WaitManualCommit(GitOperator gitOperator, System.Threading.CancellationToken token)
+        internal void WaitManualCommit(GitOperator gitOperator)
         {
-            while(!token.IsCancellationRequested) {
+            while(true) {
                 Console.WriteLine($"Send long polling request");
                 Authenticate();
                 var serviceUri = "rest/BpmToGitSynchronizerIndicatorService/CommitMessagePolling";
                 string pathToService = IsNetCore ? $"{Url}/{serviceUri}" : $"{Url}/0/{serviceUri}";
 
                 var body = "{}";
-                CancellationTokenSource cancelTokenSource = new CancellationTokenSource(); 
-                CancellationToken request_token = cancelTokenSource.Token;
-                Task task = new Task(() => { 
-                    var response = SendPostRequest(pathToService, body);
-                    Console.WriteLine($"Result of updating sync status: {response}");
-
-                    PullChangesToFileSystem();
-                    gitOperator.StageChanges();
-                    gitOperator.CommitChanges();
-                    gitOperator.PushChanges();
-                }, token);
-                task.Start();
-                task.Wait(token);
+                var response = SendPostRequest(pathToService, body);
+                Console.WriteLine($"Result of updating sync status: {response}");
+                PullChangesToFileSystem();
+                gitOperator.StageChanges();
+                gitOperator.CommitChanges();
+                gitOperator.PushChanges();
             }
         }
     }

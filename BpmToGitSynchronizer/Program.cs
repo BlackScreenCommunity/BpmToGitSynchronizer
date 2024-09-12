@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BpmToGitSynchronizer
 {
@@ -14,7 +16,9 @@ namespace BpmToGitSynchronizer
             if (args.Length == 0)
             {
                 TaskManager.RunAutoCommiter();
-                TaskManager.RunSheduledTask();
+                Task task1 = Task.Run(() => TaskManager.RunManualCommiter());
+                Task task2 = Task.Run(() => TaskManager.RunSheduledTask());
+                Task.WaitAll(task1, task2);               
             }
 
             if (args.Length >= 1 && (new string[] { "ForceCommit", "Commit" }).Any(s => args[0].Contains(s)))
