@@ -12,6 +12,7 @@ namespace BpmToGitSynchronizer
         string url;
         string userName;
         string password;
+        bool isPolling = false;
         bool isNetCore;
         CookieContainer cookies = default;
 
@@ -31,6 +32,7 @@ namespace BpmToGitSynchronizer
         /// Attribute which indicates the system platform (NetCore or NetFramework) 
         /// </summary>
         public bool IsNetCore { get => isNetCore; set => isNetCore = value; }
+        public bool IsPolling { get => isPolling; set => isPolling = value; }
 
         /// <summary>
         /// Autentification service url-address
@@ -160,6 +162,24 @@ namespace BpmToGitSynchronizer
             catch (Exception e)
             {
                 return e.Message;
+            }
+        }
+
+        internal void WaitManualCommit(GitOperator gitOperator)
+        {
+            while(true) {
+                Console.WriteLine($"Send long polling request");
+                Authenticate();
+                var serviceUri = "rest/BpmToGitSynchronizerIndicatorService/CommitMessagePolling";
+                string pathToService = IsNetCore ? $"{Url}/{serviceUri}" : $"{Url}/0/{serviceUri}";
+
+                var body = "{}";
+                var response = SendPostRequest(pathToService, body);
+                Console.WriteLine($"Result of updating sync status: {response}");
+                PullChangesToFileSystem();
+                gitOperator.StageChanges();
+                gitOperator.CommitChanges();
+                gitOperator.PushChanges();
             }
         }
     }

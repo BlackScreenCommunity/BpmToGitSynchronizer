@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Serialization;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 
@@ -53,7 +54,20 @@ namespace BpmToGitSynchronizer
             Branch = branch;
             CommitMessage = commitMessage;
         }
-
+        
+        /// <summary>
+        /// Constructor
+        /// Create GitOperator from GitRepoConfiguration object
+        /// </summary>
+        /// <param name="repoConfiguration">Git repository configuration from appsettings</param>
+        public GitOperator(GitRepoConfiguration repoConfiguration) {
+            RepoPath = repoConfiguration.Path;
+            UserName = repoConfiguration.UserName;
+            Password = repoConfiguration.Password;
+            Branch = repoConfiguration.Branch;
+            CommitMessage = repoConfiguration.CommitMessage;
+        }
+        
         /// <summary>
         /// Stage all the Changes/Untracked/Deleted files
         /// </summary>
@@ -69,7 +83,6 @@ namespace BpmToGitSynchronizer
             catch (Exception ex)
             {
                 Console.WriteLine("StageChanges " + ex.Message);
-                //throw new Exception("Ошибка создания добавления изменений в индекс", ex);
             }
         }
 
@@ -90,7 +103,6 @@ namespace BpmToGitSynchronizer
             catch (Exception e)
             {
                 Console.WriteLine("CommitChanges " + e.Message);
-                //throw new Exception("Ошибка создания COMMIT", e);
             }
         }
 

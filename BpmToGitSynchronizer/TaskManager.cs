@@ -37,12 +37,26 @@ namespace BpmToGitSynchronizer
         {
             var operationPeriodInHour = int.Parse(Configuration["PushPullPeriodInHours"]);
             Console.WriteLine($"Run task every {operationPeriodInHour} hours");
-            var aTimer = new System.Timers.Timer(operationPeriodInHour * 60 * 60 * 1000);
+            var aTimer = new System.Timers.Timer(operationPeriodInHour * 60 * 1000);
             aTimer.Elapsed += new ElapsedEventHandler(RunTask);
             aTimer.Start();
             waitHandle.WaitOne();
         }
 
+
+        public static void RunManualCommiter() {
+            
+            var configurations = PushPullConfigurationManager.Load();
+            foreach (var configuration in configurations)
+            {
+                if(configuration.BpmSoft.EnableManualCommit) {
+                    BpmSoftOperator bpmsoftOperator = new BpmSoftOperator(configuration.BpmSoft.Url, configuration.BpmSoft.UserName, configuration.BpmSoft.Password, configuration.BpmSoft.IsNetCore);
+                    Console.WriteLine($"BpmSoftOperator: {bpmsoftOperator.PullChangesToFileSystem()}");
+                    bpmsoftOperator.WaitManualCommit(new GitOperator(configuration.GitRepo));
+                }
+            }
+
+        }
         /// <summary>
         /// Event handler - runs pull-push task
         /// </summary>
@@ -69,19 +83,14 @@ namespace BpmToGitSynchronizer
 
                 try
                 {
-                    var gitOperator = new GitOperator(
-                        configuration.GitRepo.Path,
-                        configuration.GitRepo.UserName,
-                        configuration.GitRepo.Password,
-                        configuration.GitRepo.Branch,
-                        configuration.GitRepo.CommitMessage
-                    );
+                    var gitOperator = new GitOperator(configuration.GitRepo);
 
                     gitOperator.StageChanges();
                     gitOperator.CommitChanges();
                     gitOperator.PushChanges();
                     bpmsoftOperator.UpdateLastGitSyncDate();
                     bpmsoftOperator.UpdateSyncStatus(SyncStatus.Success);
+                   
                 }
                 catch (Exception ex)
                 {
