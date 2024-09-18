@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace BpmToGitSynchronizer
 {
@@ -168,18 +169,27 @@ namespace BpmToGitSynchronizer
         internal void WaitManualCommit(GitOperator gitOperator)
         {
             while(true) {
-                Console.WriteLine($"Send long polling request");
-                Authenticate();
-                var serviceUri = "rest/BpmToGitSynchronizerIndicatorService/CommitMessagePolling";
-                string pathToService = IsNetCore ? $"{Url}/{serviceUri}" : $"{Url}/0/{serviceUri}";
+                try {
+                    Console.WriteLine($"Send long polling request");
+                    Authenticate();
+                    var serviceUri = "rest/BpmToGitSynchronizerIndicatorService/CommitMessagePolling";
+                    string pathToService = IsNetCore ? $"{Url}/{serviceUri}" : $"{Url}/0/{serviceUri}";
 
-                var body = "{}";
-                var response = SendPostRequest(pathToService, body);
-                Console.WriteLine($"Result of updating sync status: {response}");
-                PullChangesToFileSystem();
-                gitOperator.StageChanges();
-                gitOperator.CommitChanges();
-                gitOperator.PushChanges();
+                    var body = "{}";
+                    var response = SendPostRequest(pathToService, body);
+                    Console.WriteLine($"Result of updating sync status: {response}");
+
+                    var manualCommitResponse = JsonConvert.DeserializeObject<ManualCommitPollingResult>(response);
+                    var commitMessage = manualCommitResponse?.CommitMessagePollingResult?.Message;
+                
+                    PullChangesToFileSystem();
+                    gitOperator.StageChanges();
+                    gitOperator.CommitChanges(commitMessage);
+                    gitOperator.PushChanges();
+                }
+                catch(Exception ex) {
+                    Console.WriteLine($"Error at manual commit polling. {ex.Message}. {ex.StackTrace}" );
+                }
             }
         }
     }
