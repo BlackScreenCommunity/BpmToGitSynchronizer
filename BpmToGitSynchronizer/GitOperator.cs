@@ -12,7 +12,6 @@ namespace BpmToGitSynchronizer
     {
         string repoPath;
         string username;
-        string branch;
         string password;
         string commitMessage;
 
@@ -29,10 +28,6 @@ namespace BpmToGitSynchronizer
         /// </summary>
         public string Password { get => password; set => password = value; }
         /// <summary>
-        /// Branch name where changes will be committed
-        /// </summary>
-        public string Branch { get => branch; set => branch = value; }
-        /// <summary>
         /// Default part of tme message.
         /// The message is formed according to the following template: "YYYY-MM-DD {CommitMessage}"
         /// </summary>
@@ -44,14 +39,12 @@ namespace BpmToGitSynchronizer
         /// <param name="repoPath">Path to folder with repository</param>
         /// <param name="username">VCS Username</param>
         /// <param name="password">VCS Password</param>
-        /// <param name="branch">Branch name where changes will be committed</param>
         /// <param name="commitMessage">Commit message</param>
-        public GitOperator(string repoPath, string username, string password, string branch, string commitMessage = "Commit")
+        public GitOperator(string repoPath, string username, string password, string commitMessage = "Commit")
         {
             RepoPath = repoPath;
             UserName = username;
             Password = password;
-            Branch = branch;
             CommitMessage = commitMessage;
         }
         
@@ -64,7 +57,6 @@ namespace BpmToGitSynchronizer
             RepoPath = repoConfiguration.Path;
             UserName = repoConfiguration.UserName;
             Password = repoConfiguration.Password;
-            Branch = repoConfiguration.Branch;
             CommitMessage = repoConfiguration.CommitMessage;
         }
         
@@ -94,9 +86,10 @@ namespace BpmToGitSynchronizer
             try
             {
                 using (var repo = new Repository(RepoPath))
-                {
-                    repo.Commit($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm")} {CommitMessage} {additionalCommitMessage}", new Signature(UserName, Branch, DateTimeOffset.Now),
-                    new Signature(UserName, Branch, DateTimeOffset.Now));
+               {
+                    var currentBranchName = GetCurrentBranchName(repo);
+                    repo.Commit($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm")} {CommitMessage} {additionalCommitMessage}", new Signature(UserName, currentBranchName, DateTimeOffset.Now),
+                    new Signature(UserName, currentBranchName, DateTimeOffset.Now));
                 }
 
             }
@@ -123,7 +116,7 @@ namespace BpmToGitSynchronizer
                                 Username = UserName,
                                 Password = Password 
                             });
-                    repo.Network.Push(repo.Branches[Branch], options);
+                    repo.Network.Push(repo.Branches[GetCurrentBranchName(repo)], options);
                 }
             }
             catch (Exception e)
@@ -131,6 +124,10 @@ namespace BpmToGitSynchronizer
                 Console.WriteLine("Error when pushing changes " + e.Message);
                 throw new Exception("Ошибка выполнения PUSH в репозиторий", e);
             }
+        }
+
+        private string GetCurrentBranchName(Repository repo) {
+            return repo.Head.FriendlyName;
         }
     }
 }

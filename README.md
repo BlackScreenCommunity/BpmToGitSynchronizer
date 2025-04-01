@@ -32,7 +32,6 @@ Cодержит параметры сборок и их репозиториев
 - GitRepo.Path - путь до локального git-репозитория, каталог Pkg, куда выгружаются изменения BPMSoft;
 - GitRepo.UserName - Имя пользователя удаленного git-репозитория;
 - GitRepo.Password - Пароль пользователя удаленного git-репозитория;
-- GitRepo.Branch - Название текщей ветки git-репозитория;
 - GitRepo.CommitMessage - Часть сообщения коммита. Полный коммит формируется по шаблону `{YYYY-MM-DD HH:mm}{CommitMessage}`.
 
 ### Пример заполнения файла appsettings.json
@@ -52,7 +51,6 @@ Cодержит параметры сборок и их репозиториев
                 "Path": "C:\\Users\\User\\GitRepository",
                 "UserName": "email@email.ru",
                 "Password": "password",
-                "Branch": "master",
                 "CommitMessage": "AutoCommit"
             }
         }
