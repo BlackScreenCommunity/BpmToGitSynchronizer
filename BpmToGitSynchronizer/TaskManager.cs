@@ -35,9 +35,9 @@ namespace BpmToGitSynchronizer
         /// </summary>
         public static void RunSheduledTask()
         {
-            var operationPeriodInHour = int.Parse(Configuration["PushPullPeriodInHours"]);
-            Console.WriteLine($"Run task every {operationPeriodInHour} hours");
-            var aTimer = new System.Timers.Timer(operationPeriodInHour * 60 * 1000);
+            var operationPeriodInMinutes = int.Parse(Configuration["PushPullPeriodInMinutes"]);
+            Console.WriteLine($"Run task every {operationPeriodInMinutes} minutes");
+            var aTimer = new System.Timers.Timer(operationPeriodInMinutes * 60 * 1000);
             aTimer.Elapsed += new ElapsedEventHandler(RunTask);
             aTimer.Start();
             waitHandle.WaitOne();
