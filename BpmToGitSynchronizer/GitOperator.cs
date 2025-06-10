@@ -125,7 +125,9 @@ namespace BpmToGitSynchronizer
                 throw new Exception("Ошибка выполнения PUSH в репозиторий", e);
             }
         }
-
+        /// <summary>
+        /// Gets repository branch name for commit creation
+        /// </summary>
         private string GetCurrentBranchName(Repository repo) {
             return repo.Head.FriendlyName;
         }
